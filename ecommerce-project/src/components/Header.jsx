@@ -1,16 +1,19 @@
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext.jsx';
 
-import './Header.css';
+import './header.css';
 
 export function Header() {
+    const { cartQuantity } = useCart();
+
     return (
         <div className="header">
             <div className="left-section">
                 <Link to="/" className="header-link">
                     <img className="logo"
-                        src="images/logo-white.png" />
+                        src="/images/logo-white.png" />
                     <img className="mobile-logo"
-                        src="images/mobile-logo-white.png" />
+                        src="/images/mobile-logo-white.png" />
                 </Link>
             </div>
 
@@ -18,7 +21,7 @@ export function Header() {
                 <input className="search-bar" type="text" placeholder="Search" />
 
                 <button className="search-button">
-                    <img className="search-icon" src="images/icons/search-icon.png" />
+                    <img className="search-icon" src="/images/icons/search-icon.png" />
                 </button>
             </div>
 
@@ -29,8 +32,8 @@ export function Header() {
                 </Link>
 
                 <Link className="cart-link header-link" to="/checkout">
-                    <img className="cart-icon" src="images/icons/cart-icon.png" />
-                    <div className="cart-quantity">3</div>
+                    <img className="cart-icon" src="/images/icons/cart-icon.png" />
+                    <div className="cart-quantity">{cartQuantity}</div>
                     <div className="cart-text">Cart</div>
                 </Link>
             </div>
