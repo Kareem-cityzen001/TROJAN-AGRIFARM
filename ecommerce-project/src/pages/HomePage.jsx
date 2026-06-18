@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Header } from '../components/Header';
@@ -96,9 +97,11 @@ ProductCard.propTypes = {
 };
 
 export function HomePage() {
-    useEffect(() => {
-        document.title = 'Ecommerce Project';
-    }, []);
+    axios.get('http://localhost:3000/api/products')
+        .then((response) => {
+            response.data
+        });
+    
 
     return (
         <>
