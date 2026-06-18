@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Header } from '../components/Header';
 import { useCart } from '../context/CartContext.jsx';
-import { products } from '../../starting-code/data/products.js';
 import './HomePage.css';
 
 function ProductCard({ product }) {
@@ -97,10 +96,14 @@ ProductCard.propTypes = {
 };
 
 export function HomePage() {
-    axios.get('http://localhost:3000/api/products')
-        .then((response) => {
-            response.data
-        });
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:3000/api/products')
+                .then((response) => {
+                    setProducts(response.data);
+                });
+    },[]);
+    
     
 
     return (
