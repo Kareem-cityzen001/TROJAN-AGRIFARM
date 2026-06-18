@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { products } from '../../starting-code/data/products.js';
 import deliveryOptions from '../../starting-code/backend/deliveryOptions.json';
 import { useCart } from '../context/CartContext.jsx';
@@ -75,8 +74,6 @@ export function CheckoutPage() {
 
     return (
         <>
-           
-
             <div className="checkout-header">
                 <div className="header-content">
                     <div className="checkout-header-left-section">
@@ -87,8 +84,7 @@ export function CheckoutPage() {
                     </div>
 
                     <div className="checkout-header-middle-section">
-                        Checkout (<Link className="return-to-home-link"
-                            to="/">{cartItems.reduce((total, item) => total + item.quantity, 0)} items</Link>)
+                        Checkout (<Link className="return-to-home-link" to="/">{cartItems.reduce((total, item) => total + item.quantity, 0)} items</Link>)
                     </div>
 
                     <div className="checkout-header-right-section">
@@ -115,16 +111,11 @@ export function CheckoutPage() {
                                     </div>
 
                                     <div className="cart-item-details-grid">
-                                        <img className="product-image"
-                                            src={`/${cartItem.product.image}`} />
+                                        <img className="product-image" src={`/${cartItem.product.image}`} />
 
                                         <div className="cart-item-details">
-                                            <div className="product-name">
-                                                {cartItem.product.name}
-                                            </div>
-                                            <div className="product-price">
-                                                {formatCurrency(cartItem.product.priceCents)}
-                                            </div>
+                                            <div className="product-name">{cartItem.product.name}</div>
+                                            <div className="product-price">{formatCurrency(cartItem.product.priceCents)}</div>
                                             <div className="product-quantity">
                                                 <span>
                                                     Quantity:{' '}
@@ -160,9 +151,7 @@ export function CheckoutPage() {
                                         </div>
 
                                         <div className="delivery-options">
-                                            <div className="delivery-options-title">
-                                                Choose a delivery option:
-                                            </div>
+                                            <div className="delivery-options-title">Choose a delivery option:</div>
 
                                             {deliveryOptions.map((deliveryOption) => (
                                                 <label className="delivery-option" key={deliveryOption.id}>
@@ -196,9 +185,7 @@ export function CheckoutPage() {
                     </div>
 
                     <div className="payment-summary">
-                        <div className="payment-summary-title">
-                            Payment Summary
-                        </div>
+                        <div className="payment-summary-title">Payment Summary</div>
 
                         <div className="payment-summary-row">
                             <div>Items ({cartItems.reduce((total, item) => total + item.quantity, 0)}):</div>
