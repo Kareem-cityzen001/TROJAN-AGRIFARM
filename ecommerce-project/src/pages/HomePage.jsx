@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Header } from '../components/Header';
 import { useCart } from '../context/CartContext.jsx';
 import { products } from '../../starting-code/data/products.js';
@@ -80,6 +81,19 @@ function ProductCard({ product }) {
         </div>
     );
 }
+
+ProductCard.propTypes = {
+    product: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        image: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        priceCents: PropTypes.number.isRequired,
+        rating: PropTypes.shape({
+            stars: PropTypes.number.isRequired,
+            count: PropTypes.number.isRequired,
+        }).isRequired,
+    }).isRequired,
+};
 
 export function HomePage() {
     useEffect(() => {

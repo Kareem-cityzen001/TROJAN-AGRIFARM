@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const CART_STORAGE_KEY = 'ecommerce-project-cart';
 
@@ -83,6 +84,10 @@ export function CartProvider({ children }) {
         </CartContext.Provider>
     );
 }
+
+CartProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+};
 
 export function useCart() {
     const cartContext = useContext(CartContext);
