@@ -1,68 +1,42 @@
+import axios from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-const CART_STORAGE_KEY = 'ecommerce-project-cart';
-
 const CartContext = createContext(null);
 
-function readStoredCart() {
-    try {
-        const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-
-        return storedCart ? JSON.parse(storedCart) : [];
-    } catch {
-        return [];
-    }
-}
-
 export function CartProvider({ children }) {
-    const [cartItems, setCartItems] = useState(readStoredCart);
+    const [cartItems, setCartItems] = useState([]);
+
+    async function loadCartItems() {
+        const response = await axios.get('/api/cart-items?expand=product');
+        setCartItems(response.data);
+    }
 
     useEffect(() => {
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-    }, [cartItems]);
+        loadCartItems();
+    }, []);
 
-    function addToCart(productId, quantity, deliveryOptionId = '1') {
-        setCartItems((currentCartItems) => {
-            const existingItem = currentCartItems.find((item) => item.productId === productId);
-
-            if (existingItem) {
-                return currentCartItems.map((item) =>
-                    item.productId === productId
-                        ? { ...item, quantity: item.quantity + quantity }
-                        : item
-                );
-            }
-
-            return [...currentCartItems, { productId, quantity, deliveryOptionId }];
-        });
+    async function addToCart(productId, quantity, deliveryOptionId = '1') {
+        await axios.post('/api/cart-items', { productId, quantity, deliveryOptionId });
+        await loadCartItems();
     }
 
-    function updateCartItemQuantity(productId, quantity) {
-        setCartItems((currentCartItems) =>
-            currentCartItems
-                .map((item) =>
-                    item.productId === productId ? { ...item, quantity } : item
-                )
-                .filter((item) => item.quantity > 0)
-        );
+    async function updateCartItemQuantity(productId, quantity) {
+        await axios.put(`/api/cart-items/${productId}`, { quantity });
+        await loadCartItems();
     }
 
-    function updateCartItemDeliveryOption(productId, deliveryOptionId) {
-        setCartItems((currentCartItems) =>
-            currentCartItems.map((item) =>
-                item.productId === productId ? { ...item, deliveryOptionId } : item
-            )
-        );
+    async function updateCartItemDeliveryOption(productId, deliveryOptionId) {
+        await axios.put(`/api/cart-items/${productId}`, { deliveryOptionId });
+        await loadCartItems();
     }
 
-    function removeCartItem(productId) {
-        setCartItems((currentCartItems) =>
-            currentCartItems.filter((item) => item.productId !== productId)
-        );
+    async function removeCartItem(productId) {
+        await axios.delete(`/api/cart-items/${productId}`);
+        await loadCartItems();
     }
 
-    function clearCart() {
+    async function clearCart() {
         setCartItems([]);
     }
 

@@ -6,14 +6,32 @@ import { CartItem } from '../models/CartItem.js';
 
 const router = express.Router();
 
+function parseOrderProducts(products) {
+  if (Array.isArray(products)) {
+    return products;
+  }
+
+  if (typeof products === 'string') {
+    try {
+      return JSON.parse(products);
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
 router.get('/', async (req, res) => {
   const expand = req.query.expand;
   let orders = await Order.unscoped().findAll({ order: [['orderTimeMs', 'DESC']] }); // Sort by most recent
 
   if (expand === 'products') {
     orders = await Promise.all(orders.map(async (order) => {
-      const products = await Promise.all(order.products.map(async (product) => {
-        const productDetails = await Product.findByPk(product.productId);
+      const orderProducts = parseOrderProducts(order.products);
+
+      const products = await Promise.all(orderProducts.map(async (product) => {
+        const productDetails = await Product.findOne({ where: { id: product.productId } });
         return {
           ...product,
           product: productDetails
@@ -38,11 +56,11 @@ router.post('/', async (req, res) => {
 
   let totalCostCents = 0;
   const products = await Promise.all(cartItems.map(async (item) => {
-    const product = await Product.findByPk(item.productId);
+    const product = await Product.findOne({ where: { id: item.productId } });
     if (!product) {
       throw new Error(`Product not found: ${item.productId}`);
     }
-    const deliveryOption = await DeliveryOption.findByPk(item.deliveryOptionId);
+    const deliveryOption = await DeliveryOption.findOne({ where: { id: item.deliveryOptionId } });
     if (!deliveryOption) {
       throw new Error(`Invalid delivery option: ${item.deliveryOptionId}`);
     }
@@ -74,14 +92,16 @@ router.get('/:orderId', async (req, res) => {
   const { orderId } = req.params;
   const expand = req.query.expand;
 
-  let order = await Order.findByPk(orderId);
+  let order = await Order.findOne({ where: { id: orderId } });
   if (!order) {
     return res.status(404).json({ error: 'Order not found' });
   }
 
   if (expand === 'products') {
-    const products = await Promise.all(order.products.map(async (product) => {
-      const productDetails = await Product.findByPk(product.productId);
+    const orderProducts = parseOrderProducts(order.products);
+
+    const products = await Promise.all(orderProducts.map(async (product) => {
+      const productDetails = await Product.findOne({ where: { id: product.productId } });
       return {
         ...product,
         product: productDetails

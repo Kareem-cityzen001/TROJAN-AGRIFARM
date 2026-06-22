@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import axios from 'axios';
+import {formatMoney} from '../utils/money.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { products } from '../../starting-code/data/products.js';
 import deliveryOptions from '../../starting-code/backend/deliveryOptions.json';
@@ -63,12 +65,13 @@ export function CheckoutPage() {
     const taxCents = Math.round(subtotalCents * 0.1);
     const totalCents = subtotalCents + taxCents;
 
-    function handlePlaceOrder() {
+    async function handlePlaceOrder() {
         if (cartProducts.length === 0) {
             return;
         }
 
-        clearCart();
+        await axios.post('/api/orders');
+        await clearCart();
         navigate('/orders');
     }
 
@@ -115,7 +118,7 @@ export function CheckoutPage() {
 
                                         <div className="cart-item-details">
                                             <div className="product-name">{cartItem.product.name}</div>
-                                            <div className="product-price">{formatCurrency(cartItem.product.priceCents)}</div>
+                                            <div className="product-price">{formatMoney(cartItem.product.priceCents)}</div>
                                             <div className="product-quantity">
                                                 <span>
                                                     Quantity:{' '}

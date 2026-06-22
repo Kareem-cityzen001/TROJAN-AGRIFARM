@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import {formatMoney} from '../utils/money.js';
 import { Header } from '../components/Header';
 import { useCart } from '../context/CartContext.jsx';
 import './HomePage.css';
@@ -47,7 +48,7 @@ function ProductCard({ product }) {
             </div>
 
             <div className="product-price">
-                ${(product.priceCents / 100).toFixed(2)}
+                {formatMoney(product.priceCents)}
             </div>
 
             <div className="product-quantity-container">
@@ -95,7 +96,7 @@ ProductCard.propTypes = {
     }).isRequired,
 };
 
-export function HomePage( { cart } ) {
+export function HomePage() {
     const [products, setProducts] = useState([]);
     
     
@@ -112,7 +113,7 @@ export function HomePage( { cart } ) {
 
     return (
         <>
-            <Header cart={cart} />
+            <Header />
 
             <div className="home-page">
                 <div className="products-grid">

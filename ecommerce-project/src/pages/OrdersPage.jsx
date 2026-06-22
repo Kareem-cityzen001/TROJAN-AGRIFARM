@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { Header } from '../components/Header';
 import { Link } from 'react-router-dom';
-import orders from '../../starting-code/backend/orders.json';
 import { products } from '../../starting-code/data/products.js';
 import { useCart } from '../context/CartContext.jsx';
 import './OrdersPage.css';
@@ -12,9 +12,15 @@ function formatCurrency(cents) {
 
 export function OrdersPage() {
     const { addToCart } = useCart();
+    const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         document.title = 'Orders';
+
+        axios.get('/api/orders?expand=products')
+            .then((response) => {
+                setOrders(response.data);
+            });
     }, []);
 
     return (
@@ -23,7 +29,15 @@ export function OrdersPage() {
          <div className="orders-page">
             <div className="page-title">Your orders</div>
 
-            {orders.map((order) => (
+            {orders.length === 0 ? (
+                <div className="order-container">
+                    <div className="order-header">
+                        <div className="order-header-left-section">
+                            <div className="order-date">No orders yet.</div>
+                        </div>
+                    </div>
+                </div>
+            ) : orders.map((order) => (
                 <div className="order-container" key={order.id}>
                     <div className="order-header">
                         <div className="order-header-left-section">

@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 
   if (expand === 'product') {
     cartItems = await Promise.all(cartItems.map(async (item) => {
-      const product = await Product.findByPk(item.productId);
+      const product = await Product.findOne({ where: { id: item.productId } });
       return {
         ...item.toJSON(),
         product
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const { productId, quantity } = req.body;
 
-  const product = await Product.findByPk(productId);
+  const product = await Product.findOne({ where: { id: productId } });
   if (!product) {
     return res.status(400).json({ error: 'Product not found' });
   }
@@ -62,7 +62,7 @@ router.put('/:productId', async (req, res) => {
   }
 
   if (deliveryOptionId !== undefined) {
-    const deliveryOption = await DeliveryOption.findByPk(deliveryOptionId);
+    const deliveryOption = await DeliveryOption.findOne({ where: { id: deliveryOptionId } });
     if (!deliveryOption) {
       return res.status(400).json({ error: 'Invalid delivery option' });
     }
