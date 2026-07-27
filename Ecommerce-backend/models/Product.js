@@ -18,7 +18,21 @@ export const Product = sequelize.define('Product', {
   },
   rating: {
     type: DataTypes.JSON,
-    allowNull: false
+    allowNull: false,
+    get() {
+      const value = this.getDataValue('rating');
+      if (typeof value === 'string') {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return value;
+        }
+      }
+      return value;
+    },
+    set(value) {
+      this.setDataValue('rating', typeof value === 'string' ? value : JSON.stringify(value));
+    }
   },
   priceCents: {
     type: DataTypes.INTEGER,

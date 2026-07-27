@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { formatMoney } from '../utils/money.js';
 import { Link, useNavigate } from 'react-router-dom';
-import { products } from '../../starting-code/data/products.js';
 import { useCart } from '../context/CartContext.jsx';
 import './CheckoutPage.css';
 import './checkout-header.css';
@@ -43,7 +42,7 @@ export function CheckoutPage() {
     }, []);
 
     const cartProducts = cartItems.map((cartItem) => {
-        const product = products.find((currentProduct) => currentProduct.id === cartItem.productId);
+        const product = cartItem.product;
         const deliveryOption = deliveryOptions.find((option) => option.id === cartItem.deliveryOptionId) || deliveryOptions[0] || {
             id: '1',
             deliveryDays: 7,

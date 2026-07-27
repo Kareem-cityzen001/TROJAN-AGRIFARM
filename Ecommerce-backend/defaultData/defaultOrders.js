@@ -6,12 +6,12 @@ export const defaultOrders = [
     phoneNumber: "0712345678",
     products: [
       {
-        productId: "a1b2c3d4-0001-4f89-9a12-1234567890aa",
+        productId: "medicine-001",
         quantity: 1,
         estimatedDeliveryTimeMs: 1723716000000
       },
       {
-        productId: "a1b2c3d4-0003-4f89-9a12-1234567890cc",
+        productId: "medicine-003",
         quantity: 2,
         estimatedDeliveryTimeMs: 1723456800000
       }
@@ -24,7 +24,7 @@ export const defaultOrders = [
     phoneNumber: "0723456789",
     products: [
       {
-        productId: "a1b2c3d4-0002-4f89-9a12-1234567890bb",
+        productId: "medicine-002",
         quantity: 2,
         estimatedDeliveryTimeMs: 1718618400000
       }

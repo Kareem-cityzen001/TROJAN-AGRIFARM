@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
-import orders from '../../starting-code/backend/orders.json';
-import { products } from '../../starting-code/data/products.js';
 import { useCart } from '../context/CartContext.jsx';
 import './TrackingPage.css';
 import '../components/header.css';
@@ -19,12 +18,22 @@ function formatDeliveryDate(deliveryDays) {
 
 export function TrackingPage() {
   const { cartQuantity } = useCart();
-  const orderProduct = orders[0]?.products[0];
-  const product = products.find((currentProduct) => currentProduct.id === orderProduct?.productId);
+  const [order, setOrder] = useState(null);
 
-    useEffect(() => {
-        document.title = 'Tracking';
-    }, []);
+  useEffect(() => {
+    document.title = 'Tracking';
+
+    axios.get('/api/orders?expand=products')
+      .then((response) => {
+        setOrder(response.data[0] || null);
+      })
+      .catch(() => {
+        setOrder(null);
+      });
+  }, []);
+
+  const orderProduct = order?.products?.[0];
+  const product = orderProduct?.product;
 
     return (
         <>
@@ -67,7 +76,13 @@ export function TrackingPage() {
         </Link>
 
         <div className="delivery-date">
-          Arriving on {formatDeliveryDate(1)}
+          {orderProduct?.estimatedDeliveryTimeMs
+            ? `Arriving on ${new Date(orderProduct.estimatedDeliveryTimeMs).toLocaleDateString('en-KE', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              })}`
+            : 'Arriving soon'}
         </div>
 
         <div className="product-info">
@@ -78,7 +93,7 @@ export function TrackingPage() {
           Quantity: {orderProduct?.quantity ?? 1}
         </div>
 
-        <img className="product-image" src={product ? `/${product.image}` : '/images/products/athletic-cotton-socks-6-pairs.jpg'} />
+        <img className="product-image" src={product ? `/${product.image}` : '/images/products/medicines/oxytetracycline%20LA.jpg'} />
 
         <div className="progress-labels-container">
           <div className="progress-label">
