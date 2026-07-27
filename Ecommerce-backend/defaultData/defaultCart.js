@@ -1,11 +1,11 @@
 export const defaultCart = [
   {
-    productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
+    productId: "a1b2c3d4-0001-4f89-9a12-1234567890aa",
     quantity: 2,
     deliveryOptionId: "1"
   },
   {
-    productId: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
+    productId: "a1b2c3d4-0002-4f89-9a12-1234567890bb",
     quantity: 1,
     deliveryOptionId: "2"
   }

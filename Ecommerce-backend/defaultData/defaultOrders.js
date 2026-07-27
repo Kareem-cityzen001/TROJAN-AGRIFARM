@@ -1,28 +1,30 @@
 export const defaultOrders = [
   {
-    id: "27cba69d-4c3d-4098-b42d-ac7fa62b7664",
+    id: "order-0001-1111-2222-3333",
     orderTimeMs: 1723456800000,
-    totalCostCents: 3506,
+    totalCostCents: 290000,
+    phoneNumber: "0712345678",
     products: [
       {
-        productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
+        productId: "a1b2c3d4-0001-4f89-9a12-1234567890aa",
         quantity: 1,
         estimatedDeliveryTimeMs: 1723716000000
       },
       {
-        productId: "83d4ca15-0f35-48f5-b7a3-1ea210004f2e",
+        productId: "a1b2c3d4-0003-4f89-9a12-1234567890cc",
         quantity: 2,
         estimatedDeliveryTimeMs: 1723456800000
       }
     ]
   },
   {
-    id: "b6b6c212-d30e-4d4a-805d-90b52ce6b37d",
+    id: "order-0002-4444-5555-6666",
     orderTimeMs: 1718013600000,
-    totalCostCents: 4190,
+    totalCostCents: 170000,
+    phoneNumber: "0723456789",
     products: [
       {
-        productId: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
+        productId: "a1b2c3d4-0002-4f89-9a12-1234567890bb",
         quantity: 2,
         estimatedDeliveryTimeMs: 1718618400000
       }
