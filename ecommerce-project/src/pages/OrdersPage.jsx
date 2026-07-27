@@ -2,13 +2,9 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Header } from '../components/Header';
 import { Link } from 'react-router-dom';
-import { products } from '../../starting-code/data/products.js';
 import { useCart } from '../context/CartContext.jsx';
+import { formatMoney } from '../utils/money.js';
 import './OrdersPage.css';
-
-function formatCurrency(cents) {
-    return `$${(cents / 100).toFixed(2)}`;
-}
 
 export function OrdersPage() {
     const { addToCart } = useCart();
@@ -42,13 +38,16 @@ export function OrdersPage() {
                     <div className="order-header">
                         <div className="order-header-left-section">
                             <div className="order-date">
-                                Order placed: {new Date(order.orderTimeMs).toLocaleDateString('en-US', {
+                                Order placed: {new Date(order.orderTimeMs).toLocaleDateString('en-KE', {
                                     month: 'long',
                                     day: 'numeric',
                                     year: 'numeric',
                                 })}
                             </div>
-                            <div className="order-total">Total: {formatCurrency(order.totalCostCents)}</div>
+                            {order.phoneNumber && (
+                                <div className="order-phone">Paid from: {order.phoneNumber}</div>
+                            )}
+                            <div className="order-total">Total: {formatMoney(order.totalCostCents)}</div>
                         </div>
 
                         <div className="order-header-right-section">
@@ -59,7 +58,7 @@ export function OrdersPage() {
                     </div>
 
                     {order.products.map((orderProduct) => {
-                        const product = products.find((currentProduct) => currentProduct.id === orderProduct.productId);
+                        const product = orderProduct.product;
 
                         if (!product) {
                             return null;

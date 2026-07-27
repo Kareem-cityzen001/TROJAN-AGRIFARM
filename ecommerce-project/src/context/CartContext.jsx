@@ -37,7 +37,8 @@ export function CartProvider({ children }) {
     }
 
     async function clearCart() {
-        setCartItems([]);
+        await axios.delete('/api/cart-items');
+        await loadCartItems();
     }
 
     const cartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);

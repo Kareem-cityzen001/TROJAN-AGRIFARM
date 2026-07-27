@@ -23,11 +23,16 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { productId, quantity } = req.body;
+  const { productId, quantity, deliveryOptionId = '1' } = req.body;
 
   const product = await Product.findOne({ where: { id: productId } });
   if (!product) {
     return res.status(400).json({ error: 'Product not found' });
+  }
+
+  const deliveryOption = await DeliveryOption.findOne({ where: { id: deliveryOptionId } });
+  if (!deliveryOption) {
+    return res.status(400).json({ error: 'Invalid delivery option' });
   }
 
   if (typeof quantity !== 'number' || quantity < 1 || quantity > 10) {
@@ -39,10 +44,15 @@ router.post('/', async (req, res) => {
     cartItem.quantity += quantity;
     await cartItem.save();
   } else {
-    cartItem = await CartItem.create({ productId, quantity, deliveryOptionId: "1" });
+    cartItem = await CartItem.create({ productId, quantity, deliveryOptionId });
   }
 
   res.status(201).json(cartItem);
+});
+
+router.delete('/', async (req, res) => {
+  await CartItem.destroy({ where: {} });
+  res.status(204).send();
 });
 
 router.put('/:productId', async (req, res) => {

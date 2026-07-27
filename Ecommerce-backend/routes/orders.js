@@ -48,6 +48,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+  const { phoneNumber } = req.body;
   const cartItems = await CartItem.findAll();
 
   if (cartItems.length === 0) {
@@ -65,7 +66,7 @@ router.post('/', async (req, res) => {
       throw new Error(`Invalid delivery option: ${item.deliveryOptionId}`);
     }
     const productCost = product.priceCents * item.quantity;
-    const shippingCost = deliveryOption.priceCents;
+    const shippingCost = deliveryOption.priceCents * item.quantity;
     totalCostCents += productCost + shippingCost;
     const estimatedDeliveryTimeMs = Date.now() + deliveryOption.deliveryDays * 24 * 60 * 60 * 1000;
     return {
@@ -80,7 +81,8 @@ router.post('/', async (req, res) => {
   const order = await Order.create({
     orderTimeMs: Date.now(),
     totalCostCents,
-    products
+    products,
+    phoneNumber
   });
 
   await CartItem.destroy({ where: {} });

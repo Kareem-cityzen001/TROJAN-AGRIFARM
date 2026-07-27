@@ -1,22 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import {formatMoney} from '../utils/money.js';
+import { formatMoney } from '../utils/money.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { products } from '../../starting-code/data/products.js';
-import deliveryOptions from '../../starting-code/backend/deliveryOptions.json';
 import { useCart } from '../context/CartContext.jsx';
 import './CheckoutPage.css';
 import './checkout-header.css';
-
-function formatCurrency(cents) {
-    return `$${(cents / 100).toFixed(2)}`;
-}
 
 function formatDeliveryDate(deliveryDays) {
     const deliveryDate = new Date();
     deliveryDate.setDate(deliveryDate.getDate() + deliveryDays);
 
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat('en-KE', {
         weekday: 'long',
         month: 'long',
         day: 'numeric',
@@ -32,14 +27,29 @@ export function CheckoutPage() {
         removeCartItem,
         clearCart,
     } = useCart();
+    const [deliveryOptions, setDeliveryOptions] = useState([]);
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [placeOrderError, setPlaceOrderError] = useState('');
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
     useEffect(() => {
         document.title = 'Checkout';
     }, []);
 
+    useEffect(() => {
+        axios.get('/api/delivery-options?expand=estimatedDeliveryTime')
+            .then((response) => setDeliveryOptions(response.data))
+            .catch(() => setDeliveryOptions([]));
+    }, []);
+
     const cartProducts = cartItems.map((cartItem) => {
         const product = products.find((currentProduct) => currentProduct.id === cartItem.productId);
-        const deliveryOption = deliveryOptions.find((option) => option.id === cartItem.deliveryOptionId) || deliveryOptions[0];
+        const deliveryOption = deliveryOptions.find((option) => option.id === cartItem.deliveryOptionId) || deliveryOptions[0] || {
+            id: '1',
+            deliveryDays: 7,
+            priceCents: 0,
+            estimatedDeliveryTimeMs: Date.now() + 7 * 24 * 60 * 60 * 1000
+        };
 
         return {
             ...cartItem,
@@ -70,9 +80,23 @@ export function CheckoutPage() {
             return;
         }
 
-        await axios.post('/api/orders');
-        await clearCart();
-        navigate('/orders');
+        if (!phoneNumber.trim()) {
+            setPlaceOrderError('Please enter the phone number used for payment.');
+            return;
+        }
+
+        setPlaceOrderError('');
+        setIsPlacingOrder(true);
+
+        try {
+            await axios.post('/api/orders', { phoneNumber: phoneNumber.trim() });
+            await clearCart();
+            navigate('/orders');
+        } catch (error) {
+            setPlaceOrderError(error.response?.data?.error || 'Unable to place the order.');
+        } finally {
+            setIsPlacingOrder(false);
+        }
     }
 
     return (
@@ -175,7 +199,7 @@ export function CheckoutPage() {
                                                         <div className="delivery-option-price">
                                                             {deliveryOption.priceCents === 0
                                                                 ? 'FREE Shipping'
-                                                                : `${formatCurrency(deliveryOption.priceCents)} - Shipping`}
+                                                                : `${formatMoney(deliveryOption.priceCents)} - Shipping`}
                                                         </div>
                                                     </div>
                                                 </label>
@@ -192,31 +216,51 @@ export function CheckoutPage() {
 
                         <div className="payment-summary-row">
                             <div>Items ({cartItems.reduce((total, item) => total + item.quantity, 0)}):</div>
-                            <div className="payment-summary-money">{formatCurrency(paymentSummary.itemsTotalCents)}</div>
+                            <div className="payment-summary-money">{formatMoney(paymentSummary.itemsTotalCents)}</div>
                         </div>
 
                         <div className="payment-summary-row">
                             <div>Shipping &amp; handling:</div>
-                            <div className="payment-summary-money">{formatCurrency(paymentSummary.shippingTotalCents)}</div>
+                            <div className="payment-summary-money">{formatMoney(paymentSummary.shippingTotalCents)}</div>
                         </div>
 
                         <div className="payment-summary-row subtotal-row">
                             <div>Total before tax:</div>
-                            <div className="payment-summary-money">{formatCurrency(subtotalCents)}</div>
+                            <div className="payment-summary-money">{formatMoney(subtotalCents)}</div>
                         </div>
 
                         <div className="payment-summary-row">
                             <div>Estimated tax (10%):</div>
-                            <div className="payment-summary-money">{formatCurrency(taxCents)}</div>
+                            <div className="payment-summary-money">{formatMoney(taxCents)}</div>
                         </div>
 
                         <div className="payment-summary-row total-row">
                             <div>Order total:</div>
-                            <div className="payment-summary-money">{formatCurrency(totalCents)}</div>
+                            <div className="payment-summary-money">{formatMoney(totalCents)}</div>
                         </div>
 
-                        <button className="place-order-button button-primary" onClick={handlePlaceOrder}>
-                            Place your order
+                        <div className="payment-instructions">
+                            <div className="payment-instructions-title">Pay using M-Pesa Till</div>
+                            <div className="payment-instructions-detail">Till number: <strong>3139533</strong></div>
+                            <div className="payment-instructions-detail">Send payment for the order total to this number, then confirm your phone number below.</div>
+                            <label htmlFor="phone-number" className="phone-label">Phone number</label>
+                            <input
+                                id="phone-number"
+                                type="tel"
+                                value={phoneNumber}
+                                onChange={(event) => setPhoneNumber(event.target.value)}
+                                placeholder="07XXXXXXXX"
+                                className="phone-input"
+                            />
+                            {placeOrderError && <div className="error-message">{placeOrderError}</div>}
+                        </div>
+
+                        <button
+                            className="place-order-button button-primary"
+                            onClick={handlePlaceOrder}
+                            disabled={isPlacingOrder}
+                        >
+                            {isPlacingOrder ? 'Placing your order…' : 'Place your order'}
                         </button>
                     </div>
                 </div>

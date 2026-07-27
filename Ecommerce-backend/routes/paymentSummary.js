@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     const deliveryOption = await DeliveryOption.findOne({ where: { id: item.deliveryOptionId } });
     totalItems += item.quantity;
     productCostCents += product.priceCents * item.quantity;
-    shippingCostCents += deliveryOption.priceCents;
+    shippingCostCents += deliveryOption.priceCents * item.quantity;
   }
 
   const totalCostBeforeTaxCents = productCostCents + shippingCostCents;
