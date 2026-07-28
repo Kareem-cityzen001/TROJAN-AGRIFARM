@@ -1,3 +1,3 @@
 export function formatMoney(amountCents) {
-  return `$${(amountCents / 100).toFixed(2)}`;
+  return `KSh ${(amountCents / 100).toFixed(2)}`;
 }

@@ -1,10 +1,35 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import {formatMoney} from '../utils/money.js';
+import { formatMoney } from '../utils/money.js';
 import { Header } from '../components/Header';
 import { useCart } from '../context/CartContext.jsx';
+import rating0 from '../components/images/ratings/rating-0.png';
+import rating5 from '../components/images/ratings/rating-5.png';
+import rating10 from '../components/images/ratings/rating-10.png';
+import rating15 from '../components/images/ratings/rating-15.png';
+import rating20 from '../components/images/ratings/rating-20.png';
+import rating25 from '../components/images/ratings/rating-25.png';
+import rating30 from '../components/images/ratings/rating-30.png';
+import rating35 from '../components/images/ratings/rating-35.png';
+import rating40 from '../components/images/ratings/rating-40.png';
+import rating45 from '../components/images/ratings/rating-45.png';
+import rating50 from '../components/images/ratings/rating-50.png';
 import './HomePage.css';
+
+const ratingImages = {
+    0: rating0,
+    5: rating5,
+    10: rating10,
+    15: rating15,
+    20: rating20,
+    25: rating25,
+    30: rating30,
+    35: rating35,
+    40: rating40,
+    45: rating45,
+    50: rating50,
+};
 
 function ProductCard({ product }) {
     const { addToCart } = useCart();
@@ -28,7 +53,7 @@ function ProductCard({ product }) {
         setIsAddedToCartVisible(true);
     }
 
-    const starsImage = `/images/ratings/rating-${Math.round(product.rating.stars * 10)}.png`;
+    const starsImage = ratingImages[Math.round(product.rating.stars * 10)] || rating0;
 
     return (
         <div className="product-container">
@@ -41,7 +66,7 @@ function ProductCard({ product }) {
             </div>
 
             <div className="product-rating-container">
-                <img className="product-rating-stars" src={starsImage} />
+                <img className="product-rating-stars" src={starsImage} alt="Product rating" />
                 <div className="product-rating-count link-primary">
                     {product.rating.count}
                 </div>
@@ -98,29 +123,64 @@ ProductCard.propTypes = {
 
 export function HomePage() {
     const [products, setProducts] = useState([]);
-    
-    
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadError, setLoadError] = useState('');
+
     useEffect(() => {
+        setIsLoading(true);
+        setLoadError('');
+
         axios.get('/api/products')
-                .then((response) => {
-                    setProducts(response.data);
-                });
+            .then((response) => {
+                setProducts(response.data);
+            })
+            .catch(() => {
+                setProducts([]);
+                setLoadError('Unable to load medicines right now.');
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, []);
 
+    const filteredProducts = useMemo(() => {
+        const query = searchTerm.trim().toLowerCase();
 
-    },[]);
-    
-    
+        if (!query) {
+            return products;
+        }
+
+        return products.filter((product) => {
+            const nameMatches = product.name.toLowerCase().includes(query);
+            const keywords = product.keywords || [];
+            const keywordMatches = keywords.some((keyword) => keyword.toLowerCase().includes(query));
+            return nameMatches || keywordMatches;
+        });
+    }, [products, searchTerm]);
 
     return (
         <>
-            <Header />
+            <Header
+                showSearch
+                searchTerm={searchTerm}
+                onSearchChange={(event) => setSearchTerm(event.target.value)}
+            />
 
             <div className="home-page">
-                <div className="products-grid">
-                    {products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
+                {isLoading ? (
+                    <div className="home-page__status">Loading medicines…</div>
+                ) : loadError ? (
+                    <div className="home-page__status error-message">{loadError}</div>
+                ) : filteredProducts.length === 0 ? (
+                    <div className="home-page__status">No medicines match your search.</div>
+                ) : (
+                    <div className="products-grid">
+                        {filteredProducts.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                )}
             </div>
         </>
     );

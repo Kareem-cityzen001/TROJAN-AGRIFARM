@@ -32,7 +32,7 @@ export function CheckoutPage() {
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
     useEffect(() => {
-        document.title = 'Checkout';
+        document.title = 'Checkout | TROJAN AGRIFARM';
     }, []);
 
     useEffect(() => {
@@ -104,8 +104,8 @@ export function CheckoutPage() {
                 <div className="header-content">
                     <div className="checkout-header-left-section">
                         <Link to="/">
-                            <img className="logo" src="/images/logo.png" />
-                            <img className="mobile-logo" src="/images/mobile-logo.png" />
+                            <img className="logo" src="/images/logo.png" alt="Trojan AgriFarm logo" />
+                            <img className="mobile-logo" src="/images/mobile-logo.png" alt="Trojan AgriFarm logo" />
                         </Link>
                     </div>
 
@@ -137,43 +137,43 @@ export function CheckoutPage() {
                                     </div>
 
                                     <div className="cart-item-details-grid">
-                                        <img className="product-image" src={`/${cartItem.product.image}`} />
+                                        <img className="product-image" src={`/${cartItem.product.image}`} alt={cartItem.product.name} />
 
                                         <div className="cart-item-details">
                                             <div className="product-name">{cartItem.product.name}</div>
                                             <div className="product-price">{formatMoney(cartItem.product.priceCents)}</div>
-                                            <div className="product-quantity">
-                                                <span>
-                                                    Quantity:{' '}
-                                                    <select
-                                                        value={cartItem.quantity}
-                                                        onChange={(event) => updateCartItemQuantity(
-                                                            cartItem.productId,
-                                                            Number(event.target.value)
-                                                        )}
-                                                    >
-                                                        {Array.from({ length: 10 }, (_, index) => index + 1).map((optionValue) => (
-                                                            <option key={optionValue} value={optionValue}>
-                                                                {optionValue}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </span>
-                                                <span className="update-quantity-link link-primary">Update</span>
-                                                <span
-                                                    className="delete-quantity-link link-primary"
-                                                    role="button"
-                                                    tabIndex={0}
-                                                    onClick={() => removeCartItem(cartItem.productId)}
-                                                    onKeyDown={(event) => {
-                                                        if (event.key === 'Enter' || event.key === ' ') {
-                                                            removeCartItem(cartItem.productId);
-                                                        }
-                                                    }}
+                                        <div className="product-quantity">
+                                            <span>
+                                                Quantity:{' '}
+                                                <select
+                                                    value={cartItem.quantity}
+                                                    onChange={(event) => updateCartItemQuantity(
+                                                        cartItem.productId,
+                                                        Number(event.target.value)
+                                                    )}
+                                                    aria-label={`Quantity for ${cartItem.product.name}`}
                                                 >
-                                                    Delete
-                                                </span>
-                                            </div>
+                                                    {Array.from({ length: 10 }, (_, index) => index + 1).map((optionValue) => (
+                                                        <option key={optionValue} value={optionValue}>
+                                                            {optionValue}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </span>
+                                            <span
+                                                className="delete-quantity-link link-primary"
+                                                role="button"
+                                                tabIndex={0}
+                                                onClick={() => removeCartItem(cartItem.productId)}
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter' || event.key === ' ') {
+                                                        removeCartItem(cartItem.productId);
+                                                    }
+                                                }}
+                                            >
+                                                Delete
+                                            </span>
+                                        </div>
                                         </div>
 
                                         <div className="delivery-options">
@@ -257,7 +257,8 @@ export function CheckoutPage() {
                         <button
                             className="place-order-button button-primary"
                             onClick={handlePlaceOrder}
-                            disabled={isPlacingOrder}
+                            disabled={cartProducts.length === 0 || isPlacingOrder}
+                            type="button"
                         >
                             {isPlacingOrder ? 'Placing your order…' : 'Place your order'}
                         </button>

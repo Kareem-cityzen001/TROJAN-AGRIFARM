@@ -34,6 +34,20 @@
   border: 1px solid rgba(0, 0, 0, 0);
 }
 
+.header .brand-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+}
+
+.header .brand-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
 .header .header-link:hover {
   border: 1px solid white;
 }
@@ -97,10 +111,12 @@
 }
 
 .header .right-section {
-  width: 180px;
+  width: 200px;
   flex-shrink: 0;
   display: flex;
   justify-content: end;
+  align-items: center;
+  gap: 8px;
 }
 
 .header .orders-link {
@@ -123,10 +139,13 @@
   display: flex;
   align-items: center;
   position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .header .cart-icon {
-  width: 38px;
+  width: 32px;
+  height: 32px;
 }
 
 .header .cart-text {

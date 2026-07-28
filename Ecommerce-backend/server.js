@@ -23,13 +23,15 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const frontendRoot = path.join(__dirname, '..', 'Ecommerce-project');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve images from the images folder
-app.use('/images', express.static(path.join(__dirname, 'images')));
+// Serve storefront images and public assets from the frontend app
+app.use('/images', express.static(path.join(frontendRoot, 'public', 'images')));
+app.use(express.static(path.join(frontendRoot, 'public')));
 
 // Use routes
 app.use('/api/products', productRoutes);

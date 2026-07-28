@@ -9,13 +9,25 @@ import './OrdersPage.css';
 export function OrdersPage() {
     const { addToCart } = useCart();
     const [orders, setOrders] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadError, setLoadError] = useState('');
 
     useEffect(() => {
-        document.title = 'Orders';
+        document.title = 'Orders | TROJAN AGRIFARM';
+
+        setIsLoading(true);
+        setLoadError('');
 
         axios.get('/api/orders?expand=products')
             .then((response) => {
                 setOrders(response.data);
+            })
+            .catch(() => {
+                setOrders([]);
+                setLoadError('Unable to load your orders.');
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }, []);
 
@@ -25,7 +37,23 @@ export function OrdersPage() {
          <div className="orders-page">
             <div className="page-title">Your orders</div>
 
-            {orders.length === 0 ? (
+            {isLoading ? (
+                <div className="order-container">
+                    <div className="order-header">
+                        <div className="order-header-left-section">
+                            <div className="order-date">Loading your orders…</div>
+                        </div>
+                    </div>
+                </div>
+            ) : loadError ? (
+                <div className="order-container">
+                    <div className="order-header">
+                        <div className="order-header-left-section">
+                            <div className="order-date error-message">{loadError}</div>
+                        </div>
+                    </div>
+                </div>
+            ) : orders.length === 0 ? (
                 <div className="order-container">
                     <div className="order-header">
                         <div className="order-header-left-section">
@@ -51,7 +79,7 @@ export function OrdersPage() {
                         </div>
 
                         <div className="order-header-right-section">
-                            <Link className="track-package-link link-primary" to="/tracking">
+                            <Link className="track-package-link link-primary" to={`/tracking?orderId=${order.id}`}>
                                 Track package
                             </Link>
                         </div>
@@ -67,7 +95,7 @@ export function OrdersPage() {
                         return (
                             <div className="order-details-grid" key={orderProduct.productId}>
                                 <div className="product-image-container">
-                                    <img src={`/${product.image}`} />
+                                    <img src={`/${product.image}`} alt={product.name} />
                                 </div>
                                 <div>
                                     <div className="product-name">{product.name}</div>
