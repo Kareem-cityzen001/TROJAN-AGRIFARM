@@ -178,23 +178,23 @@ export const defaultProducts = [
   {
     id: "medicine-017",
     image: "images/products/medicines/delete%20EC.jpg",
-    name: "Oxyclozanide Drench",
+    name: "Delete EC",
     rating: {
       stars: 4.4,
       count: 91,
     },
-    priceCents: 88000,
+    priceCents: 22000,
     keywords: ["dewormer", "oral", "cattle"]
   },
   {
     id: "medicine-018",
     image: "images/products/medicines/triax.jpg",
-    name: "Triclabendazole Drench",
+    name: "Triax Spray",
     rating: {
       stars: 4.5,
       count: 94,
     },
-    priceCents: 125000,
+    priceCents: 25000,
     keywords: ["dewormer", "oral", "cattle"]
   },
   {
@@ -320,7 +320,7 @@ export const defaultProducts = [
   },
   {
     id: "medicine-030",
-    image: "images/products/medicines/selenium%20%2B%20vitamin%20E.jpg",
+    image: "images/products/medicines/selenium_vitamin%20E.jpg",
     name: "Selenium + Vitamin E",
     rating: {
       stars: 4.2,
@@ -397,7 +397,7 @@ export const defaultProducts = [
   },
   {
     id: "medicine-037",
-    image: "images/products/medicines/diclofenac%20injection.jpg",
+    image: "images/products/medicines/ketoprofen%20injection.jpg",
     name: "Flunixin Meglumine",
     rating: {
       stars: 4.4,

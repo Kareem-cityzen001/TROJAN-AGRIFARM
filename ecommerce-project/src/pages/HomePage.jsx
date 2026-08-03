@@ -4,12 +4,6 @@ import PropTypes from 'prop-types';
 import { formatMoney } from '../utils/money.js';
 import { Header } from '../components/Header';
 import { useCart } from '../context/CartContext.jsx';
-import rating0 from '../components/images/ratings/rating-0.png';
-import rating5 from '../components/images/ratings/rating-5.png';
-import rating10 from '../components/images/ratings/rating-10.png';
-import rating15 from '../components/images/ratings/rating-15.png';
-import rating20 from '../components/images/ratings/rating-20.png';
-import rating25 from '../components/images/ratings/rating-25.png';
 import rating30 from '../components/images/ratings/rating-30.png';
 import rating35 from '../components/images/ratings/rating-35.png';
 import rating40 from '../components/images/ratings/rating-40.png';
@@ -17,13 +11,9 @@ import rating45 from '../components/images/ratings/rating-45.png';
 import rating50 from '../components/images/ratings/rating-50.png';
 import './HomePage.css';
 
+const ratingValues = [30, 35, 40, 45, 50];
+
 const ratingImages = {
-    0: rating0,
-    5: rating5,
-    10: rating10,
-    15: rating15,
-    20: rating20,
-    25: rating25,
     30: rating30,
     35: rating35,
     40: rating40,
@@ -31,10 +21,22 @@ const ratingImages = {
     50: rating50,
 };
 
+function getProductImageSrc(imagePath) {
+    return '/' + imagePath;
+}
+
 function ProductCard({ product }) {
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [isAddedToCartVisible, setIsAddedToCartVisible] = useState(false);
+
+    const ratingValue = useMemo(() => {
+        return ratingValues[Math.floor(Math.random() * ratingValues.length)];
+    }, [product.id]);
+
+    const ratingCount = useMemo(() => {
+        return Math.floor(50 + Math.random() * 300);
+    }, [product.id]);
 
     useEffect(() => {
         if (!isAddedToCartVisible) {
@@ -53,12 +55,12 @@ function ProductCard({ product }) {
         setIsAddedToCartVisible(true);
     }
 
-    const starsImage = ratingImages[Math.round(product.rating.stars * 10)] || rating0;
+    const starsImage = ratingImages[ratingValue] || rating0;
 
     return (
         <div className="product-container">
             <div className="product-image-container">
-                <img className="product-image" src={`/${product.image}`} />
+                <img className="product-image" src={getProductImageSrc(product.image)} alt={product.name} />
             </div>
 
             <div className="product-name limit-text-to-2-lines">
@@ -68,7 +70,7 @@ function ProductCard({ product }) {
             <div className="product-rating-container">
                 <img className="product-rating-stars" src={starsImage} alt="Product rating" />
                 <div className="product-rating-count link-primary">
-                    {product.rating.count}
+                    {ratingCount}
                 </div>
             </div>
 
