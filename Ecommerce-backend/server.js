@@ -23,7 +23,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const frontendRoot = path.join(__dirname, '..', 'Ecommerce-project');
+
+// ✅ FIXED: Point to frontend folder (lowercase - matches GitHub)
+const frontendRoot = path.join(__dirname, '..', 'ecommerce-project');
+const frontendBuildPath = path.join(frontendRoot, 'dist');
 
 // Middleware
 app.use(cors());
@@ -41,16 +44,18 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/reset', resetRoutes);
 app.use('/api/payment-summary', paymentSummaryRoutes);
 
-// Serve static files from the dist folder
-app.use(express.static(path.join(__dirname, 'dist')));
+// ✅ FIXED: Serve the FRONTEND's build folder, not the backend's
+app.use(express.static(frontendBuildPath));
 
-// Catch-all route to serve index.html for any unmatched routes
+// ✅ FIXED: Catch-all route to serve index.html for React Router
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  const indexPath = path.join(frontendBuildPath, 'index.html');
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).send('index.html not found');
+    res.status(404).send(
+      'index.html not found — did you run "npm run build" in ecommerce-project and commit the dist folder?'
+    );
   }
 });
 
