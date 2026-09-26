@@ -218,3 +218,30 @@
     padding: 12px;
   }
 }
+
+@media (max-width: 575px) {
+  .orders-page {
+    margin-top: 122px;
+    margin-bottom: 48px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .orders-page .page-title {
+    font-size: 23px;
+  }
+
+  .orders-page .orders-grid {
+    row-gap: 24px;
+  }
+
+  .orders-page .order-header {
+    padding: 12px;
+  }
+
+  .orders-page .order-details-grid {
+    padding: 20px 14px;
+    column-gap: 14px;
+    row-gap: 0;
+  }
+}

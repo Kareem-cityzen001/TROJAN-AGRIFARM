@@ -166,3 +166,72 @@
   width: 26px;
   text-align: center;
 }
+
+@media (max-width: 575px) {
+  .header {
+    box-sizing: border-box;
+    height: 112px;
+    padding: 8px 12px 10px;
+    flex-wrap: wrap;
+    align-content: space-between;
+  }
+
+  .header .left-section {
+    width: auto;
+  }
+
+  .header .header-link {
+    padding: 5px 6px;
+  }
+
+  .header .brand-link {
+    gap: 5px;
+  }
+
+  .header .brand-name {
+    font-size: 12px;
+  }
+
+  .header .middle-section {
+    order: 3;
+    flex: 0 0 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .header .search-bar {
+    height: 38px;
+    min-width: 0;
+  }
+
+  .header .search-button {
+    height: 40px;
+  }
+
+  .header .right-section {
+    width: auto;
+    gap: 2px;
+  }
+
+  .header .orders-link,
+  .header .cart-link {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .header .orders-text,
+  .header .cart-text {
+    font-size: 13px;
+  }
+
+  .header .cart-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .header .cart-quantity {
+    top: 5px;
+    right: 38px;
+    font-size: 12px;
+  }
+}
